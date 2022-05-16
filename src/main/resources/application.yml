@@ -12,7 +12,7 @@ logging:
   pattern:
     console: "[%thread] %-5level %logger{36} - %msg%n"
 wx:
-  appId: 应用的appId
+  appId: 应用的appIdmaster
   mchId: 商户号
   mchKey: 商户密钥
   notifyUrl: 异步回掉地址
