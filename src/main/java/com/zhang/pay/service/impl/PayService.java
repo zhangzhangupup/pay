@@ -1,6 +1,7 @@
 package com.zhang.pay.service.impl;
 
 
+import com.google.gson.Gson;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
@@ -12,6 +13,7 @@ import com.zhang.pay.enums.PayPlatformEnum;
 import com.zhang.pay.pojo.PayInfo;
 import com.zhang.pay.service.IPayService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +23,17 @@ import java.math.BigDecimal;
 @Slf4j
 @Service
 public class PayService implements IPayService {
-
+    private final static String QUEUE_PAY_NOTIFY = "payNotify";
+    /**
+     * 测试合并分支
+     */
     @Autowired
     private BestPayService bestPayService;
 
     @Autowired
     private PayInfoMapper payInfoMapper;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     /**
      * 创建/发起支付
@@ -88,6 +95,10 @@ public class PayService implements IPayService {
             payInfo.setPlatformNumber(payResponse.getOutTradeNo());
             payInfoMapper.updateByPrimaryKeySelective(payInfo);
         }
+        /**
+         * 通过mq发送消息
+         */
+        amqpTemplate.convertAndSend(QUEUE_PAY_NOTIFY, new Gson().toJson(payInfo));
         /*
          * 判断支付类型，选择性的返回不要通知的返回值
          */
