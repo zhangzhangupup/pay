@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 public class PayService implements IPayService {
     private final static String QUEUE_PAY_NOTIFY = "payNotify";
     /**
-     * 测试
+     * 测试合并代码
      */
     @Autowired
     private BestPayService bestPayService;
